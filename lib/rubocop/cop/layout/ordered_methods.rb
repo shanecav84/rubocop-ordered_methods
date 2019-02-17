@@ -47,9 +47,20 @@ module RuboCop
           (send nil? { #{VISIBILITY_MODIFIERS.map(&:inspect).join(' ')} })
         PATTERN
 
+        def autocorrect(node)
+          OrderedMethodsCorrector.correct(
+            processed_source,
+            node,
+            @previous_node
+          )
+        end
+
         def on_begin(node)
           consecutive_methods(node.children) do |previous, current|
-            add_offense(current) unless ordered?(previous, current)
+            unless ordered?(previous, current)
+              @previous_node = previous
+              add_offense(current)
+            end
           end
         end
 

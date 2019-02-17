@@ -1,6 +1,7 @@
 # RuboCop OrderedMethods
 
-Check that methods are defined alphabetically.
+Check that methods are defined alphabetically. Note [caveats](#caveats) for
+autocorrector.
 
 ```ruby
 # bad
@@ -71,6 +72,16 @@ rubocop --require rubocop-ordered_methods
 Name | Default value | Configurable values
 --- | --- | ---
 IgnoredMethods | `initialize` | Array
+
+### Corrector
+
+The corrector will attempt to order methods alphabetically. It attempts to
+include surrounding comments and the qualifiers listed in
+`::RuboCop::Cop::Layout::OrderedMethods::QUALIFIERS`.
+
+#### Caveats
+The corrector can fail to include surrounding comments and qualifiers for some
+methods.
 
 ## Development
 
