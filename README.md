@@ -50,7 +50,7 @@ Or install it yourself as:
 
 ## Usage
 
-You need to tell RuboCop to load the OrderedMethods extension. There are three
+You need to tell RuboCop to load the OrderedMethods extension. There are two
 ways to do this:
 
 ### RuboCop configuration file
