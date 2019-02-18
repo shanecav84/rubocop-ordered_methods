@@ -10,6 +10,5 @@ rvm:
   - 2.6
 before_install:
   - gem update --system
-  - gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true
-  - gem uninstall
+  - gem uninstall -i $(rvm gemdir)@global -ax bundler || true
   - gem install bundler -v '< 2'
