@@ -1,3 +1,6 @@
+[![Gem Version](https://badge.fury.io/rb/rubocop-ordered_methods.svg)](https://badge.fury.io/rb/rubocop-ordered_methods)
+[![Build Status](https://travis-ci.org/shanecav84/rubocop-ordered_methods.svg?branch=master)](https://travis-ci.org/shanecav84/rubocop-ordered_methods)
+
 # RuboCop OrderedMethods
 
 Check that methods are defined alphabetically. Note [caveats](#caveats) for
