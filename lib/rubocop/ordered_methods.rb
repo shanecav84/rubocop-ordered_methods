@@ -1,7 +1,8 @@
 module RuboCop
+  # Our namespace
   module OrderedMethods
     PROJECT_ROOT = Pathname.new(__dir__).parent.parent.expand_path.freeze
-    CONFIG_DEFAULT = PROJECT_ROOT.join("config", "default.yml").freeze
+    CONFIG_DEFAULT = PROJECT_ROOT.join('config', 'default.yml').freeze
 
     def self.inject_defaults!
       path = CONFIG_DEFAULT.to_s
