@@ -10,6 +10,7 @@ Gem::Specification.new do |spec|
   spec.summary       = 'Checks that methods are ordered alphabetically.'
   spec.homepage      = 'https://github.com/shanecav84/rubocop-ordered_methods'
   spec.license       = 'MIT'
+  spec.required_ruby_version = '>= 2.2.2'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added
