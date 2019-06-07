@@ -84,9 +84,24 @@ module RuboCop
         # rubocop:enable Metrics/MethodLength, Style/GuardClause
 
         def with_comments(node)
-          node.source_range
-              .join(with_preceding_comments(node))
-              .join(with_succeeding_comments(node))
+          surrounding_range = node.source_range
+          @processed_source.ast_with_comments[node].each do |comment|
+            if immediate_comment_for_node?(surrounding_range, comment)
+              surrounding_range = surrounding_range.join(comment.loc.expression)
+            end
+          end
+          surrounding_range
+        end
+
+        def immediate_comment_for_node?(node, comment)
+          # Immediate preceding comment, e.g.:
+          #   # Immediately preceding comment
+          #   def a; end
+          comment.loc.expression.end_pos == node.begin_pos - 1 ||
+            # Immediate succeeding comment, e.g.:
+            #   def a; end
+            #   # Immediately succeeding comment
+            comment.loc.expression.begin_pos == node.end_pos + 1
         end
 
         def with_modifiers_and_aliases(node)
@@ -98,24 +113,6 @@ module RuboCop
           end
           found_node_range = with_comments(siblings[qualifier_index])
           surrounding_range.join(found_node_range)
-        end
-
-        def with_preceding_comments(node)
-          surrounding_range = node.source_range
-          @processed_source.ast_with_comments[node].each do |comment|
-            surrounding_range = surrounding_range.join(comment.loc.expression)
-          end
-          surrounding_range
-        end
-
-        def with_succeeding_comments(node)
-          surrounding_range = node.source_range
-          @processed_source.each_comment do |comment|
-            if comment.loc.expression.begin_pos == surrounding_range.end_pos + 1
-              surrounding_range = surrounding_range.join(comment.loc.expression)
-            end
-          end
-          surrounding_range
         end
 
         def with_surroundings(node)
