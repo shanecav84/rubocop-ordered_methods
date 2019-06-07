@@ -166,17 +166,25 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
     RUBY
   end
 
-  it 'fails to autocorrect some method formats' do
-    source = <<-RUBY.strip_indent
-      # rubocop:disable Metrics/MethodLength
+  it 'autocorrects preceding and succeeding comments' do
+    source = <<-RUBY
+      # Preceding comment for instance_b
       def instance_b; end
-      # rubocop:enable Metrics/MethodLength
+      # Succeeding comment for instance_b
 
+      # Preceding comment for instance_a
       def instance_a; end
-      alias foo instance_a
-      alias_method :foo, :instance_a
+      # Succeeding comment for instance_a
     RUBY
 
-    expect(autocorrect_source_with_loop(source)).to eq(source)
+    expect(autocorrect_source_with_loop(source)).to eq(<<-RUBY)
+      # Preceding comment for instance_a
+      def instance_a; end
+      # Succeeding comment for instance_a
+
+      # Preceding comment for instance_b
+      def instance_b; end
+      # Succeeding comment for instance_b
+    RUBY
   end
 end

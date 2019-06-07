@@ -46,6 +46,15 @@ module RuboCop
           (qualifier?(next_sibling) || alias?(next_sibling)) == node.method_name
         end
 
+        # Checks that a comment immediately precedes or immediately succeeds
+        # the node
+        def immediate_comment_for_node?(node, comment)
+          # Immediate preceding comment
+          node.line - 1 == comment.loc.last_line ||
+            # Immediate succeeding comment
+            node.last_line + 1 == comment.loc.line
+        end
+
         # We don't want a method to be defined after its alias
         def moving_after_alias?(current_node, previous_node)
           siblings = current_node.parent.children
@@ -85,23 +94,14 @@ module RuboCop
 
         def with_comments(node)
           surrounding_range = node.source_range
-          @processed_source.ast_with_comments[node].each do |comment|
+          comments = @processed_source.comments +
+                     @processed_source.ast_with_comments[node]
+          comments.each do |comment|
             if immediate_comment_for_node?(surrounding_range, comment)
               surrounding_range = surrounding_range.join(comment.loc.expression)
             end
           end
           surrounding_range
-        end
-
-        def immediate_comment_for_node?(node, comment)
-          # Immediate preceding comment, e.g.:
-          #   # Immediately preceding comment
-          #   def a; end
-          comment.loc.expression.end_pos == node.begin_pos - 1 ||
-            # Immediate succeeding comment, e.g.:
-            #   def a; end
-            #   # Immediately succeeding comment
-            comment.loc.expression.begin_pos == node.end_pos + 1
         end
 
         def with_modifiers_and_aliases(node)
