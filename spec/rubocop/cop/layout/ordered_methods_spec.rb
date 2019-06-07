@@ -66,11 +66,11 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
 
   it 'autocorrects methods that are not in alphabetical order' do
     new_source = autocorrect_source_with_loop(<<-RUBY.strip_indent)
-      # Comment
+      # Comment class_b
       def self.class_b; end
       def self.class_a; end
 
-      # Comment
+      # Comment instance_b
       def instance_b; end
       def instance_a; end
       alias foo instance_a
@@ -78,90 +78,90 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
 
       module_function
 
-      # Comment
+      # Comment module_function_b
       def module_function_b; end
       def module_function_a; end
 
       private
 
-      # Comment
+      # Comment private_b
       def private_b; end
       def private_a; end
 
       private
 
-      # Comment
+      # Comment private_d
       def private_d; end
       def private_c; end
 
       protected
 
-      # Comment
+      # Comment protected_b
       def protected_b; end
       def protected_a; end
 
       public
 
-      # Comment
+      # Comment public_b
       def public_b; end
       def public_a; end
 
-      # Comment
+      # Comment class_d
       def self.class_d; end
       def self.class_c; end
 
-      # Comment
+      # Comment instance_d
       def instance_d; end
       def instance_c; end
     RUBY
 
     expect(new_source).to eq(<<-RUBY.strip_indent)
       def self.class_a; end
-      # Comment
+      # Comment class_b
       def self.class_b; end
 
       def instance_a; end
       alias foo instance_a
       alias_method :foo, :instance_a
-      # Comment
+      # Comment instance_b
       def instance_b; end
 
       module_function
 
       def module_function_a; end
-      # Comment
+      # Comment module_function_b
       def module_function_b; end
 
       private
 
       def private_a; end
-      # Comment
+      # Comment private_b
       def private_b; end
 
       private
 
       def private_c; end
-      # Comment
+      # Comment private_d
       def private_d; end
 
       protected
 
       def protected_a; end
-      # Comment
+      # Comment protected_b
       def protected_b; end
 
       public
 
       def public_a; end
-      # Comment
+      # Comment public_b
       def public_b; end
 
       def self.class_c; end
-      # Comment
+      # Comment class_d
       def self.class_d; end
 
       def instance_c; end
-      # Comment
+      # Comment instance_d
       def instance_d; end
     RUBY
   end
