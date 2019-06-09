@@ -77,10 +77,9 @@ module RuboCop
         def filter_relevant_nodes(nodes)
           nodes.select do |node|
             (
-              class_def?(node) ||
-                instance_def?(node) ||
-                visibility_modifier?(node)
-            ) && !ignored_method?(node.method_name)
+              (node.defs_type? || node.def_type?) &&
+                !ignored_method?(node.method_name)
+            ) || VISIBILITY_MODIFIERS.include?(node.type)
           end
         end
 
