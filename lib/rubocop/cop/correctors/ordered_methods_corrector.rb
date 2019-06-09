@@ -14,11 +14,15 @@ module RuboCop
           '%<first_method_name>s and %<second_method_name>s because ' \
           'alias for %<first_method_name>s would be declared before ' \
           'its method definition.'.freeze
-        QUALIFIERS = (
-            %i[alias_method private_class_method public_class_method] +
-                       ::RuboCop::Cop::Layout::OrderedMethods::
-                         VISIBILITY_MODIFIERS
-          ).freeze
+        QUALIFIERS = %i[
+          alias_method
+          module_function
+          private_class_method
+          public_class_method
+          private
+          protected
+          public
+        ].freeze
 
         def_node_matcher :alias?, '(:alias ... (sym $_method_name))'
         def_node_matcher :qualifier?, <<-PATTERN
