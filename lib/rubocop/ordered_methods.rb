@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RuboCop
   # Our namespace
   module OrderedMethods

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rubocop'
 require_relative 'rubocop/ordered_methods'
 require_relative 'rubocop/cop/layout/ordered_methods'
