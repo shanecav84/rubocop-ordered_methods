@@ -115,14 +115,13 @@ module RuboCop
           while found_qualifier?(node, siblings[qualifier_index + 1])
             qualifier_index += 1
           end
-          found_node_range = with_comments(siblings[qualifier_index])
-          surrounding_range.join(found_node_range)
+          surrounding_range.join(siblings[qualifier_index].source_range)
         end
 
         def with_surroundings(node)
           node.source_range
-              .join(with_comments(node))
               .join(with_modifiers_and_aliases(node))
+              .join(with_comments(node))
         end
       end
     end
