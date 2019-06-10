@@ -33,7 +33,13 @@ module RuboCop
         include IgnoredMethods
         include RangeHelp
 
-        MSG = 'Methods should be sorted alphabetically.'.freeze
+        COMPARISONS = {
+          'alphabetical' => lambda do |left_method, right_method|
+            (left_method.method_name <=> right_method.method_name) != 1
+          end
+        }.freeze
+        ERR_INVALID_COMPARISON = 'Invalid "Comparison" config for ' \
+          "#{cop_name}. Expected one of: #{COMPARISONS.keys.join(', ')}".freeze
 
         def autocorrect(node)
           OrderedMethodsCorrector.correct(
@@ -47,7 +53,11 @@ module RuboCop
           consecutive_methods(node.children) do |previous, current|
             unless ordered?(previous, current)
               @previous_node = previous
-              add_offense(current)
+              add_offense(
+                current,
+                message: 'Methods should be sorted in ' \
+                  "#{cop_config['EnforcedStyle']} order."
+              )
             end
           end
         end
@@ -102,7 +112,10 @@ module RuboCop
         end
 
         def ordered?(left_method, right_method)
-          (left_method.method_name <=> right_method.method_name) != 1
+          comparison = COMPARISONS[cop_config['EnforcedStyle']]
+          raise Error, ERR_INVALID_COMPARISON if comparison.nil?
+
+          comparison.call(left_method, right_method)
         end
       end
     end

@@ -74,6 +74,7 @@ rubocop --require rubocop-ordered_methods
 
 Name | Default value | Configurable values
 --- | --- | ---
+EnforcedStyle | `alphabetical` | `alphabetical`
 IgnoredMethods | `initialize` | Array
 
 ### Corrector

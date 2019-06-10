@@ -5,55 +5,63 @@ require 'spec_helper'
 RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
   subject(:cop) { described_class.new(config) }
 
-  let(:config) { RuboCop::Config.new }
+  let(:config) do
+    RuboCop::Config.new(
+      'Layout/OrderedMethods' => {
+        'IgnoredMethods' => %w[initialize],
+        'EnforcedStyle' => enforced_style
+      }
+    )
+  end
+  let(:enforced_style) { 'alphabetical' }
 
   it 'registers an offense when methods are not in alphabetical order' do
     expect_offense(<<-RUBY.strip_indent)
       def self.class_b; end
       def self.class_a; end
-      ^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted alphabetically.
+      ^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
       def instance_b; end
       def instance_a; end
-      ^^^^^^^^^^^^^^^^^^^ Methods should be sorted alphabetically.
+      ^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
       module_function
 
       def module_function_b; end
       def module_function_a; end
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted alphabetically.
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
       private
 
       def private_b; end
       def private_a; end
-      ^^^^^^^^^^^^^^^^^^ Methods should be sorted alphabetically.
+      ^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
       private
 
       def private_d; end
       def private_c; end
-      ^^^^^^^^^^^^^^^^^^ Methods should be sorted alphabetically.
+      ^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
       protected
 
       def protected_b; end
       def protected_a; end
-      ^^^^^^^^^^^^^^^^^^^^ Methods should be sorted alphabetically.
+      ^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
       public
 
       def public_b; end
       def public_a; end
-      ^^^^^^^^^^^^^^^^^ Methods should be sorted alphabetically.
+      ^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
       def self.class_d; end
       def self.class_c; end
-      ^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted alphabetically.
+      ^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
       def instance_d; end
       def instance_c; end
-      ^^^^^^^^^^^^^^^^^^^ Methods should be sorted alphabetically.
+      ^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
     RUBY
   end
 
