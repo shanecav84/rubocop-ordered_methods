@@ -3,9 +3,9 @@
 module RuboCop
   module Cop
     module Layout
-      # Check that methods are defined alphabetically.
+      # @example EnforcedStyle: alphabetical (default)
+      #   # Check that methods are defined alphabetically.
       #
-      # @example
       #   # bad
       #   def self.b; end
       #   def self.a; end

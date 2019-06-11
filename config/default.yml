@@ -1,5 +1,6 @@
 ---
 Layout/OrderedMethods:
+  Enabled: true
   EnforcedStyle: 'alphabetical'
   IgnoredMethods:
     - initialize
