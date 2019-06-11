@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4] - 2019-06-11
+
+### Changed
+
+- More robust autocorrection of a method and its surroundings (see `Corrector` in the `README`).
+
 ## [0.3] - 2019-02-17
 
 ### Added
