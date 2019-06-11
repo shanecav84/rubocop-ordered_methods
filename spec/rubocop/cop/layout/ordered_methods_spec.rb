@@ -174,25 +174,87 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
     RUBY
   end
 
-  it 'autocorrects preceding and succeeding comments' do
+  it 'autocorrects with comments and modifiers' do
     source = <<-RUBY
+      # Long
+      # Preceding
+      # Comment
+      # class_b
+      def self.class_b; end
+      private_class_method :class_b
+
+      def self.class_a; end
+      # Long
+      # Succeeding
+      # Comment
+      # class_a
+      public_class_method :class_a
+
       # Preceding comment for instance_b
       def instance_b; end
-      # Succeeding comment for instance_b
+      # Long
+      # Succeeding
+      # Comment
+      # instance_b
+      alias_method :orig_instance_b, :instance_b
+      module_function :instance_b
+      private :instance_b
+      protected :instance_b
+      public :instance_b
 
-      # Preceding comment for instance_a
+      # Long
+      # Preceding
+      # Comment
+      # instance_a
       def instance_a; end
       # Succeeding comment for instance_a
+      alias :new_instance_a :instance_a
+      alias_method :orig_instance_a, :instance_a
+      module_function :instance_a
+      private :instance_a
+      protected :instance_a
+      public :instance_a
     RUBY
 
     expect(autocorrect_source_with_loop(source)).to eq(<<-RUBY)
-      # Preceding comment for instance_a
+      def self.class_a; end
+      # Long
+      # Succeeding
+      # Comment
+      # class_a
+      public_class_method :class_a
+
+      # Long
+      # Preceding
+      # Comment
+      # class_b
+      def self.class_b; end
+      private_class_method :class_b
+
+      # Long
+      # Preceding
+      # Comment
+      # instance_a
       def instance_a; end
       # Succeeding comment for instance_a
+      alias :new_instance_a :instance_a
+      alias_method :orig_instance_a, :instance_a
+      module_function :instance_a
+      private :instance_a
+      protected :instance_a
+      public :instance_a
 
       # Preceding comment for instance_b
       def instance_b; end
-      # Succeeding comment for instance_b
+      # Long
+      # Succeeding
+      # Comment
+      # instance_b
+      alias_method :orig_instance_b, :instance_b
+      module_function :instance_b
+      private :instance_b
+      protected :instance_b
+      public :instance_b
     RUBY
   end
 end

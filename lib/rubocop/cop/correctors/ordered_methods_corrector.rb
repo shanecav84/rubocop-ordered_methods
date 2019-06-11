@@ -36,8 +36,8 @@ module RuboCop
           @previous_node = previous_node
 
           verify_alias_method_order
-          current_range = with_surroundings(@current_node)
-          previous_range = with_surroundings(@previous_node)
+          current_range = join_surroundings(@current_node)
+          previous_range = join_surroundings(@previous_node)
           lambda do |corrector|
             corrector.replace(current_range, previous_range.source)
             corrector.replace(previous_range, current_range.source)
@@ -47,16 +47,36 @@ module RuboCop
         private
 
         def found_qualifier?(node, next_sibling)
+          return false if next_sibling.nil?
+
           (qualifier?(next_sibling) || alias?(next_sibling)) == node.method_name
         end
 
-        # Checks that a comment immediately precedes or immediately succeeds
-        # the node
-        def immediate_comment_for_node?(node, comment)
-          # Immediate preceding comment
-          node.line - 1 == comment.loc.last_line ||
-            # Immediate succeeding comment
-            node.last_line + 1 == comment.loc.line
+        def join_comments(node, source_range)
+          @processed_source.ast_with_comments[node].each do |comment|
+            source_range = source_range.join(comment.loc.expression)
+          end
+          source_range
+        end
+
+        def join_modifiers_and_aliases(node, source_range)
+          siblings = node.parent.children
+          preceding_qualifier_index = node.sibling_index
+          while found_qualifier?(node, siblings[preceding_qualifier_index + 1])
+            source_range = source_range.join(
+              siblings[preceding_qualifier_index + 1].source_range
+            )
+            preceding_qualifier_index += 1
+          end
+          source_range
+        end
+
+        def join_surroundings(node)
+          with_modifiers_and_aliases = join_modifiers_and_aliases(
+            node,
+            node.source_range
+          )
+          join_comments(node, with_modifiers_and_aliases)
         end
 
         # We don't want a method to be defined after its alias
@@ -95,34 +115,6 @@ module RuboCop
           end
         end
         # rubocop:enable Metrics/MethodLength, Style/GuardClause
-
-        def with_comments(node)
-          surrounding_range = node.source_range
-          comments = @processed_source.comments +
-                     @processed_source.ast_with_comments[node]
-          comments.each do |comment|
-            if immediate_comment_for_node?(surrounding_range, comment)
-              surrounding_range = surrounding_range.join(comment.loc.expression)
-            end
-          end
-          surrounding_range
-        end
-
-        def with_modifiers_and_aliases(node)
-          surrounding_range = node.source_range
-          siblings = node.parent.children
-          qualifier_index = node.sibling_index
-          while found_qualifier?(node, siblings[qualifier_index + 1])
-            qualifier_index += 1
-          end
-          surrounding_range.join(siblings[qualifier_index].source_range)
-        end
-
-        def with_surroundings(node)
-          node.source_range
-              .join(with_modifiers_and_aliases(node))
-              .join(with_comments(node))
-        end
       end
     end
   end
