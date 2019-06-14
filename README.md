@@ -3,8 +3,8 @@
 
 # RuboCop OrderedMethods
 
-Check that methods are defined alphabetically. Note [caveats](#caveats) for
-autocorrection.
+Check that methods are defined alphabetically. Includes
+[autocorrection](#corrector).
 
 ```ruby
 # bad
