@@ -3,33 +3,33 @@
 
 # RuboCop OrderedMethods
 
-Check that methods are defined alphabetically. Includes
-[autocorrection](#corrector).
+Check that methods are defined alphabetically per access modifier block (class, 
+public, private, protected). Includes [autocorrection](#corrector).
 
 ```ruby
 # bad
-def self.b; end
-def self.a; end
+def self.b_class; end
+def self.a_class; end
 
-def b; end
-def a; end
+def b_public; end
+def a_public; end
 
 private
 
-def d; end
-def c; end
+def b_private; end
+def a_private; end
 
 # good
-def self.a; end
-def self.b; end
+def self.a_class; end
+def self.b_class; end
 
-def a; end
-def b; end
+def a_public; end
+def b_public; end
 
 private
 
-def c; end
-def d; end
+def a_private; end
+def b_private; end
 ```
 
 ## Installation
