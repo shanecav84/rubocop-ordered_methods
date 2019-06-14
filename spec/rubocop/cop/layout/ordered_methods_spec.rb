@@ -17,51 +17,53 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
 
   it 'registers an offense when methods are not in alphabetical order' do
     expect_offense(<<-RUBY.strip_indent)
-      def self.class_b; end
-      def self.class_a; end
-      ^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+      class Foo
+        def self.class_b; end
+        def self.class_a; end
+        ^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
-      def instance_b; end
-      def instance_a; end
-      ^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+        def instance_b; end
+        def instance_a; end
+        ^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
-      module_function
+        module_function
 
-      def module_function_b; end
-      def module_function_a; end
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+        def module_function_b; end
+        def module_function_a; end
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
-      private
+        private
 
-      def private_b; end
-      def private_a; end
-      ^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+        def private_b; end
+        def private_a; end
+        ^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
-      private
+        public
 
-      def private_d; end
-      def private_c; end
-      ^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+        def public_b; end
+        def public_a; end
+        ^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
-      protected
+        private
 
-      def protected_b; end
-      def protected_a; end
-      ^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+        def private_d; end
+        def private_c; end
+        ^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
-      public
+        protected
 
-      def public_b; end
-      def public_a; end
-      ^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+        def protected_b; end
+        def protected_a; end
+        ^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
-      def self.class_d; end
-      def self.class_c; end
-      ^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+        def self.class_d; end
+        def self.class_c; end
+        ^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
 
-      def instance_d; end
-      def instance_c; end
-      ^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+        def instance_d; end
+        def instance_c; end
+        ^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+      end
     RUBY
   end
 
@@ -74,103 +76,107 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
 
   it 'autocorrects methods that are not in alphabetical order' do
     new_source = autocorrect_source_with_loop(<<-RUBY.strip_indent)
-      # Comment class_b
-      def self.class_b; end
-      def self.class_a; end
+      class Foo
+        # Comment class_b
+        def self.class_b; end
+        def self.class_a; end
 
-      # Comment instance_b
-      def instance_b; end
-      def instance_a; end
-      alias foo instance_a
-      alias_method :foo, :instance_a
+        # Comment instance_b
+        def instance_b; end
+        def instance_a; end
+        alias foo instance_a
+        alias_method :foo, :instance_a
 
-      module_function
+        module_function
 
-      # Comment module_function_b
-      def module_function_b; end
-      def module_function_a; end
+        # Comment module_function_b
+        def module_function_b; end
+        def module_function_a; end
 
-      private
+        private
 
-      # Comment private_b
-      def private_b; end
-      def private_a; end
+        # Comment private_b
+        def private_b; end
+        def private_a; end
 
-      private
+        private
 
-      # Comment private_d
-      def private_d; end
-      def private_c; end
+        # Comment private_d
+        def private_d; end
+        def private_c; end
 
-      protected
+        protected
 
-      # Comment protected_b
-      def protected_b; end
-      def protected_a; end
+        # Comment protected_b
+        def protected_b; end
+        def protected_a; end
 
-      public
+        public
 
-      # Comment public_b
-      def public_b; end
-      def public_a; end
+        # Comment public_b
+        def public_b; end
+        def public_a; end
 
-      # Comment class_d
-      def self.class_d; end
-      def self.class_c; end
+        # Comment class_d
+        def self.class_d; end
+        def self.class_c; end
 
-      # Comment instance_d
-      def instance_d; end
-      def instance_c; end
+        # Comment instance_d
+        def instance_d; end
+        def instance_c; end
+      end
     RUBY
 
     expect(new_source).to eq(<<-RUBY.strip_indent)
-      def self.class_a; end
-      # Comment class_b
-      def self.class_b; end
+      class Foo
+        def self.class_a; end
+        # Comment class_b
+        def self.class_b; end
 
-      def instance_a; end
-      alias foo instance_a
-      alias_method :foo, :instance_a
-      # Comment instance_b
-      def instance_b; end
+        def instance_a; end
+        alias foo instance_a
+        alias_method :foo, :instance_a
+        # Comment instance_b
+        def instance_b; end
 
-      module_function
+        module_function
 
-      def module_function_a; end
-      # Comment module_function_b
-      def module_function_b; end
+        def module_function_a; end
+        # Comment module_function_b
+        def module_function_b; end
 
-      private
+        private
 
-      def private_a; end
-      # Comment private_b
-      def private_b; end
+        def private_a; end
+        # Comment private_b
+        def private_b; end
 
-      private
+        private
 
-      def private_c; end
-      # Comment private_d
-      def private_d; end
+        def private_c; end
+        # Comment private_d
+        def private_d; end
 
-      protected
+        protected
 
-      def protected_a; end
-      # Comment protected_b
-      def protected_b; end
+        def protected_a; end
+        # Comment protected_b
+        def protected_b; end
 
-      public
+        public
 
-      def public_a; end
-      # Comment public_b
-      def public_b; end
+        def public_a; end
+        # Comment public_b
+        def public_b; end
 
-      def self.class_c; end
-      # Comment class_d
-      def self.class_d; end
+        def self.class_c; end
+        # Comment class_d
+        def self.class_d; end
 
-      def instance_c; end
-      # Comment instance_d
-      def instance_d; end
+        def instance_c; end
+        # Comment instance_d
+        def instance_d; end
+      end
     RUBY
   end
 
