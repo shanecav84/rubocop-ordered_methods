@@ -16,7 +16,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
   let(:enforced_style) { 'alphabetical' }
 
   it 'registers an offense when methods are not in alphabetical order' do
-    expect_offense(<<-RUBY.strip_indent)
+    expect_offense(<<-RUBY.gsub(/^\s+\|/, ''))
       class Foo
         def self.class_b; end
         def self.class_a; end
@@ -68,14 +68,14 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
   end
 
   it 'does not register an offense when methods are in alphabetical order' do
-    expect_no_offenses(<<-RUBY.strip_indent)
+    expect_no_offenses(<<-RUBY.gsub(/^\s+\|/, ''))
       def a; end
       def b; end
     RUBY
   end
 
   it 'autocorrects methods that are not in alphabetical order' do
-    new_source = autocorrect_source_with_loop(<<-RUBY.strip_indent)
+    new_source = autocorrect_source_with_loop(<<-RUBY.gsub(/^\s+\|/, ''))
       class Foo
         # Comment class_b
         def self.class_b; end
@@ -127,7 +127,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
       end
     RUBY
 
-    expect(new_source).to eq(<<-RUBY.strip_indent)
+    expect(new_source).to eq(<<-RUBY.gsub(/^\s+\|/, ''))
       class Foo
         def self.class_a; end
         # Comment class_b
