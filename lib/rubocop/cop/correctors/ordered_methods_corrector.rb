@@ -1,43 +1,22 @@
 # frozen_string_literal: true
 
 require_relative '../layout/ordered_methods'
+require_relative '../alias_method_order_verifier'
+require_relative '../qualifier_node_matchers'
 
 module RuboCop
   module Cop
     # This auto-corrects method order
     class OrderedMethodsCorrector
       class << self
-        include IgnoredNode
-        extend NodePattern::Macros
-
-        ALIAS_BEFORE_METHOD_WARNING_FMT = "Won't reorder " \
-          '%<first_method_name>s and %<second_method_name>s because ' \
-          'alias for %<first_method_name>s would be declared before ' \
-          'its method definition.'.freeze
-        QUALIFIERS = %i[
-          alias_method
-          module_function
-          private_class_method
-          public_class_method
-          private
-          protected
-          public
-        ].freeze
-
-        def_node_matcher :alias?, '(:alias ... (sym $_method_name))'
-        def_node_matcher :alias_method?,
-                         '(send nil? {:alias_method} ... (sym $_method_name))'
-        def_node_matcher :qualifier?, <<-PATTERN
-          (send nil? {#{QUALIFIERS.map(&:inspect).join(' ')}}
-            ... (sym $_method_name))
-        PATTERN
+        include QualifierNodeMatchers
 
         def correct(processed_source, node, previous_node)
           @processed_source = processed_source
           @current_node = node
           @previous_node = previous_node
 
-          verify_alias_method_order
+          AliasMethodOrderVerifier.verify!(@current_node, @previous_node)
           current_range = join_surroundings(@current_node)
           previous_range = join_surroundings(@previous_node)
           lambda do |corrector|
@@ -93,43 +72,6 @@ module RuboCop
           )
           join_comments(node, with_modifiers_and_aliases)
         end
-
-        # We don't want a method to be defined after its alias
-        def moving_after_alias?(current_node, previous_node)
-          siblings = current_node.parent.children
-          current_node_aliases = siblings.select do |sibling|
-            (alias?(sibling) || alias_method?) == current_node.method_name
-          end
-          filter = current_node_aliases.delete_if do |cna|
-            cna.sibling_index > current_node.sibling_index
-          end
-          return false if filter.empty?
-
-          current_node_aliases.any? do |cna|
-            previous_node.sibling_index > cna.sibling_index
-          end
-        end
-
-        # rubocop:disable Metrics/MethodLength, Style/GuardClause
-        def verify_alias_method_order
-          if moving_after_alias?(@current_node, @previous_node)
-            ignore_node(@current_node)
-            raise Warning, format(
-              ALIAS_BEFORE_METHOD_WARNING_FMT,
-              first_method_name: @current_node.method_name,
-              second_method_name: @previous_node.method_name
-            )
-          end
-          if moving_after_alias?(@previous_node, @current_node)
-            ignore_node(@previous_node)
-            raise Warning, format(
-              ALIAS_BEFORE_METHOD_WARNING_FMT,
-              first_method_name: @previous_node.method_name,
-              second_method_name: @current_node.method_name
-            )
-          end
-        end
-        # rubocop:enable Metrics/MethodLength, Style/GuardClause
       end
     end
   end
