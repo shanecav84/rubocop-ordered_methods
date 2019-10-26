@@ -25,6 +25,8 @@ module RuboCop
         ].freeze
 
         def_node_matcher :alias?, '(:alias ... (sym $_method_name))'
+        def_node_matcher :alias_method?,
+                         '(send nil? {:alias_method} ... (sym $_method_name))'
         def_node_matcher :qualifier?, <<-PATTERN
           (send nil? {#{QUALIFIERS.map(&:inspect).join(' ')}}
             ... (sym $_method_name))
@@ -46,6 +48,18 @@ module RuboCop
 
         private
 
+        def find_last_qualifier_index(node, siblings)
+          preceding_qualifier_index = node.sibling_index
+          last_qualifier_index = siblings.length - 1
+          while preceding_qualifier_index < last_qualifier_index
+            break if found_qualifier?(node, siblings[last_qualifier_index])
+
+            last_qualifier_index -= 1
+          end
+
+          last_qualifier_index
+        end
+
         def found_qualifier?(node, next_sibling)
           return false if next_sibling.nil?
 
@@ -62,7 +76,8 @@ module RuboCop
         def join_modifiers_and_aliases(node, source_range)
           siblings = node.parent.children
           preceding_qualifier_index = node.sibling_index
-          while found_qualifier?(node, siblings[preceding_qualifier_index + 1])
+          last_qualifier_index = find_last_qualifier_index(node, siblings)
+          while preceding_qualifier_index < last_qualifier_index
             source_range = source_range.join(
               siblings[preceding_qualifier_index + 1].source_range
             )
@@ -83,10 +98,10 @@ module RuboCop
         def moving_after_alias?(current_node, previous_node)
           siblings = current_node.parent.children
           current_node_aliases = siblings.select do |sibling|
-            alias?(sibling) == current_node.method_name
+            (alias?(sibling) || alias_method?) == current_node.method_name
           end
           filter = current_node_aliases.delete_if do |cna|
-            cna.sibling_index == current_node.sibling_index + 1
+            cna.sibling_index > current_node.sibling_index
           end
           return false if filter.empty?
 

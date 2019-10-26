@@ -263,4 +263,22 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
       public :instance_b
     RUBY
   end
+
+  it 'autocorrects when qualifiers are not immediately adjacent' do
+    source = <<-RUBY
+      def method_b; end
+      alias_method :method_from_parent_class_orig, :method_from_parent_class
+      alias_method :method_from_parent_class, :method_b
+
+      def method_a; end
+    RUBY
+
+    expect(autocorrect_source_with_loop(source)).to eq(<<-RUBY)
+      def method_a; end
+
+      def method_b; end
+      alias_method :method_from_parent_class_orig, :method_from_parent_class
+      alias_method :method_from_parent_class, :method_b
+    RUBY
+  end
 end
