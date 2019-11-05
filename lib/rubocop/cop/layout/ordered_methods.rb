@@ -42,15 +42,12 @@ module RuboCop
           "#{cop_name}. Expected one of: #{COMPARISONS.keys.join(', ')}".freeze
 
         def autocorrect(node)
-          OrderedMethodsCorrector.correct(
-            processed_source,
-            node,
-            @previous_node
-          )
+          @corrector.correct(node, @previous_node)
         end
 
         def on_begin(node)
-          consecutive_methods(node.children) do |previous, current|
+          cache(node)
+          consecutive_methods(@siblings) do |previous, current|
             unless ordered?(previous, current)
               @previous_node = previous
               add_offense(
@@ -68,6 +65,20 @@ module RuboCop
           (node.defs_type? && !is_class_method_block) ||
             (node.def_type? && is_class_method_block) ||
             (node.send_type? && node.bare_access_modifier?)
+        end
+
+        # Cache to avoid traversing the AST multiple times
+        def cache(node)
+          @cache ||= begin
+            @siblings = node.children
+
+            # Init the corrector with the cache to avoid traversing
+            # the AST in the corrector
+            if @options[:auto_correct]
+              comments = processed_source.ast_with_comments
+              @corrector = OrderedMethodsCorrector.new(comments, @siblings)
+            end
+          end
         end
 
         def consecutive_methods(nodes)
