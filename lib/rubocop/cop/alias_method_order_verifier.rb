@@ -10,10 +10,13 @@ module RuboCop
         include IgnoredNode
         include QualifierNodeMatchers
 
+        # Disable cop for freezing on Ruby 2.2
+        # rubocop:disable Style/RedundantFreeze
         ALIAS_BEFORE_METHOD_WARNING_FMT = "Won't reorder " \
           '%<first_method_name>s and %<second_method_name>s because ' \
           'alias for %<first_method_name>s would be declared before ' \
-          'its method definition.'
+          'its method definition.'.freeze
+        # rubocop:enable Style/RedundantFreeze
 
         # rubocop:disable Style/GuardClause
         def verify!(current_node, previous_node)
