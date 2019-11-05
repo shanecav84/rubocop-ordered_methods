@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5] - 2019-11-05
+
+### Removed
+
+- Drop Ruby 2.2 support
+
+### Changed
+
+- Nonadjacent qualifiers are now autocorrected (#4). Thanks @adamkiczula.
+- Cache AST traversals for significant speed up on large files
+
 ## [0.4] - 2019-06-11
 
 ### Changed
