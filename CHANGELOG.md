@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6] - 2020-03-01
+
+## Security
+
+- Upgrade rake to avoid vulnerability https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-8130
+    - rake is a development dependency for this gem, so shouldn't have been a risk for production
+
 ## [0.5] - 2019-11-05
 
 ### Removed
