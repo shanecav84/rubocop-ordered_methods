@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.summary = 'Checks that methods are ordered alphabetically.'
   spec.homepage = 'https://github.com/shanecav84/rubocop-ordered_methods'
   spec.license = 'MIT'
-  spec.required_ruby_version = '>= 2.2.2'
+  spec.required_ruby_version = '>= 2.4'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added
@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'rubocop', '>= 0.60'
+  spec.add_runtime_dependency 'rubocop', '>= 1.0'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake', '~> 12.3.3'
