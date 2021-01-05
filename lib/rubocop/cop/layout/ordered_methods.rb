@@ -81,6 +81,9 @@ module RuboCop
           end
         end
 
+        # We disable `Style/ExplicitBlockArgument` for performance. See
+        # https://github.com/shanecav84/rubocop-ordered_methods/pull/5#pullrequestreview-562957146
+        # rubocop:disable Style/ExplicitBlockArgument
         def consecutive_methods(nodes)
           filtered = filter_relevant_nodes(nodes)
           filtered_and_grouped = group_methods_by_access_modifier(filtered)
@@ -90,6 +93,7 @@ module RuboCop
             end
           end
         end
+        # rubocop:enable Style/ExplicitBlockArgument
 
         def filter_relevant_nodes(nodes)
           nodes.select do |node|

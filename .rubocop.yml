@@ -3,7 +3,9 @@ inherit_from: .rubocop_todo.yml
 require: rubocop-ordered_methods
 
 AllCops:
-  TargetRubyVersion: 2.3
+  NewCops: enable
+  SuggestExtensions: false
+  TargetRubyVersion: 2.4
 
 Metrics/BlockLength:
   Exclude:

@@ -75,7 +75,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
   end
 
   it 'autocorrects methods that are not in alphabetical order' do
-    new_source = autocorrect_source_with_loop(<<-RUBY.gsub(/^\s+\|/, ''))
+    new_source = autocorrect_source_file(<<-RUBY.gsub(/^\s+\|/, ''))
       class Foo
         # Comment class_b
         def self.class_b; end
@@ -222,7 +222,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
       public :instance_a
     RUBY
 
-    expect(autocorrect_source_with_loop(source)).to eq(<<-RUBY)
+    expect(autocorrect_source_file(source)).to eq(<<-RUBY)
       def self.class_a; end
       # Long
       # Succeeding
@@ -273,7 +273,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
       def method_a; end
     RUBY
 
-    expect(autocorrect_source_with_loop(source)).to eq(<<-RUBY)
+    expect(autocorrect_source_file(source)).to eq(<<-RUBY)
       def method_a; end
 
       def method_b; end
