@@ -6,9 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- nothing
+
+## [0.7] - 2021-01-11
+
+### Removed
+
+- Drop Ruby 2.3 support
+- Drop support for rubocop < 1.0
+
+### Changed
+
+- Support for rubocop >= 1.0 ([#5](https://github.com/shanecav84/rubocop-ordered_methods/pull/5)). Thanks @jaredbeck.
+
 ## [0.6] - 2020-03-01
 
-## Security
+### Security
 
 - Upgrade rake to avoid vulnerability https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-8130
     - rake is a development dependency for this gem, so shouldn't have been a risk for production
