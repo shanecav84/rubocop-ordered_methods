@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- nothing
+### Fixed
+
+- Fix NoMethodError and the "\[Correctable\]" label
 
 ## [0.7] - 2021-01-11
 

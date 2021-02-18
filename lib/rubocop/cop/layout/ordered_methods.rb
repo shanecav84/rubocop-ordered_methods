@@ -30,6 +30,7 @@ module RuboCop
       #   def c; end
       #   def d; end
       class OrderedMethods < Cop
+        # TODO: Extending Cop is deprecated. Should extend Cop::Base.
         include IgnoredMethods
         include RangeHelp
 
@@ -72,12 +73,13 @@ module RuboCop
           @cache ||= begin
             @siblings = node.children
 
-            # Init the corrector with the cache to avoid traversing
-            # the AST in the corrector
-            if @options[:auto_correct]
-              comments = processed_source.ast_with_comments
-              @corrector = OrderedMethodsCorrector.new(comments, @siblings)
-            end
+            # Init the corrector with the cache to avoid traversing the AST in
+            # the corrector. We always init the @corrector, even if
+            # @options[:auto_correct] is nil, because `add_offense` always
+            # attempts correction. This correction attempt is how RuboCop knows
+            # if the offense can be labeled "[Correctable]".
+            comments = processed_source.ast_with_comments
+            @corrector = OrderedMethodsCorrector.new(comments, @siblings)
           end
         end
 

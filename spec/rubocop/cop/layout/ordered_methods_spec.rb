@@ -281,4 +281,66 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
       alias_method :method_from_parent_class, :method_b
     RUBY
   end
+
+  # We integration-test our cop via `::RuboCop::CLI`. This is quite close to an
+  # end-to-end test, with the normal pros and cons that entails. We exercise
+  # more of our code, but our assertions are more fragile, for example asserting
+  # very specific output.
+  context 'when run via RuboCop CLI' do
+    include_context 'mock console output'
+    include FileHelper
+
+    it 'does not register offense when methods are alphabetical' do
+      cli = ::RuboCop::CLI.new
+      file = Tempfile.new('rubocop_ordered_methods_spec_input.rb')
+      create_file(file.path, <<~INPUT)
+        class RTA
+          def self.a; end
+          def self.b; end
+        end
+      INPUT
+      exit_status_code =
+        cli.run([
+                  '--require',
+                  'rubocop-ordered_methods',
+                  '--format',
+                  'simple',
+                  '--only',
+                  'Layout/OrderedMethods',
+                  file.path
+                ])
+      expect($stderr.string).to eq('')
+      expect(exit_status_code).to eq(::RuboCop::CLI::STATUS_SUCCESS)
+      expect($stdout.string.strip).to eq('1 file inspected, no offenses detected')
+    end
+
+    it 'registers an offense when methods are not in alphabetical order' do
+      cli = ::RuboCop::CLI.new
+      file = Tempfile.new('rubocop_ordered_methods_spec_input.rb')
+      create_file(file.path, <<~INPUT)
+        class RTA
+          def self.b; end
+          def self.a; end
+        end
+      INPUT
+      exit_status_code =
+        cli.run([
+                  '--require',
+                  'rubocop-ordered_methods',
+                  '--format',
+                  'simple',
+                  '--only',
+                  'Layout/OrderedMethods',
+                  file.path
+                ])
+      expect($stderr.string).to eq('')
+      expect(exit_status_code).to eq(::RuboCop::CLI::STATUS_OFFENSES)
+      expect($stdout.string).to eq(<<~OUTPUT)
+        == #{file.path} ==
+        C:  3:  3: [Correctable] Layout/OrderedMethods: Methods should be sorted in alphabetical order.
+
+        1 file inspected, 1 offense detected, 1 offense auto-correctable
+      OUTPUT
+    end
+  end
 end
