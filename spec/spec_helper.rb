@@ -4,6 +4,10 @@ require 'rubocop'
 require 'rubocop/rspec/support'
 require 'rubocop-ordered_methods'
 
+# Require supporting files (custom matchers and macros, etc)
+# in ./support and its subdirectories.
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].sort.each { |f| require f }
+
 RSpec.configure do |config|
   config.define_derived_metadata(file_path: %r{/spec/rubocop/cop/}) do |meta|
     meta[:type] = :cop_spec
