@@ -6,9 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8] - 2021-02-01
+
 ### Fixed
 
-- Fix NoMethodError and the "\[Correctable\]" label
+- Fix NoMethodError and the "\[Correctable\]" label ([#6](https://github.com/shanecav84/rubocop-ordered_methods/pull/6)). Thanks @jaredbeck.
 
 ## [0.7] - 2021-01-11
 
