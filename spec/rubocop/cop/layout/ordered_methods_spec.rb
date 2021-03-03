@@ -282,6 +282,34 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
     RUBY
   end
 
+  it 'autocorrects methods with Sorbet signatures' do
+    new_source = autocorrect_source_file(<<~RUBY)
+      class Foo
+        # Comment b
+        def b; end
+        # Comment a
+        sig { params(x: Integer).returns(String) }
+        def a(x)
+          x.to_s
+        end
+        alias_method :a2, :a
+      end
+    RUBY
+
+    expect(new_source).to eq(<<~RUBY)
+      class Foo
+        # Comment a
+        sig { params(x: Integer).returns(String) }
+        def a(x)
+          x.to_s
+        end
+        alias_method :a2, :a
+        # Comment b
+        def b; end
+      end
+    RUBY
+  end
+
   # We integration-test our cop via `::RuboCop::CLI`. This is quite close to an
   # end-to-end test, with the normal pros and cons that entails. We exercise
   # more of our code, but our assertions are more fragile, for example asserting

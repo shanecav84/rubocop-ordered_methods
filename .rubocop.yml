@@ -7,6 +7,12 @@ AllCops:
   SuggestExtensions: false
   TargetRubyVersion: 2.4
 
+# Subtle, left to author's discretion. In a long method with many guard clauses,
+# a blank line may help. But, in a short method, especially with only a single
+# guard clause, a blank line can be disruptive.
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
