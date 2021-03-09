@@ -74,8 +74,19 @@ rubocop --require rubocop-ordered_methods
 
 Name | Default value | Configurable values
 --- | --- | ---
-EnforcedStyle | `alphabetical` | `alphabetical`
-IgnoredMethods | `initialize` | Array
+EnforcedStyle | `'alphabetical'` | `'alphabetical'`
+IgnoredMethods | `['initialize']` | Array
+Signature | `nil` | `'sorbet'`, `nil`
+
+#### Example
+
+```
+# .rubocop.yml
+Layout/OrderedMethods:
+  EnforcedStyle: alphabetical
+  IgnoredMethods: initialize
+  Signature: sorbet
+```
 
 ### Corrector
 
@@ -124,6 +135,13 @@ private :instance_a
 protected :instance_a
 public :instance_a
 ```
+
+#### Method signatures
+
+Support for (Sorbet) method signatures was added to the corrector by
+[#7](https://github.com/shanecav84/rubocop-ordered_methods/pull/7).
+It is off by default due to performance concerns (not yet benchmarked). Enable
+with `Signature: sorbet`.
 
 #### Caveats
 

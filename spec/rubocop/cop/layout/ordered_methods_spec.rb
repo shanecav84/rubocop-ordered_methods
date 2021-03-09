@@ -5,14 +5,15 @@ require 'spec_helper'
 RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
   subject(:cop) { described_class.new(config) }
 
-  let(:config) do
+  let(:config) {
     RuboCop::Config.new(
       'Layout/OrderedMethods' => {
         'IgnoredMethods' => %w[initialize],
         'EnforcedStyle' => enforced_style
-      }
+      }.merge(cop_config)
     )
-  end
+  }
+  let(:cop_config) { {} }
   let(:enforced_style) { 'alphabetical' }
 
   it 'registers an offense when methods are not in alphabetical order' do
@@ -282,32 +283,68 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
     RUBY
   end
 
-  it 'autocorrects methods with Sorbet signatures' do
-    new_source = autocorrect_source_file(<<~RUBY)
-      class Foo
-        # Comment b
-        def b; end
-        # Comment a
-        sig { params(x: Integer).returns(String) }
-        def a(x)
-          x.to_s
-        end
-        alias_method :a2, :a
-      end
-    RUBY
+  context 'with config `Signature: sorbet`' do
+    let(:cop_config) { { 'Signature' => 'sorbet' } }
 
-    expect(new_source).to eq(<<~RUBY)
-      class Foo
-        # Comment a
-        sig { params(x: Integer).returns(String) }
-        def a(x)
-          x.to_s
+    it 'autocorrects methods with Sorbet signatures' do
+      new_source = autocorrect_source_file(<<~RUBY)
+        class Foo
+          # Comment b
+          def b; end
+          # Comment a
+          sig { params(x: Integer).returns(String) }
+          def a(x)
+            x.to_s
+          end
+          alias_method :a2, :a
         end
-        alias_method :a2, :a
-        # Comment b
-        def b; end
-      end
-    RUBY
+      RUBY
+
+      expect(new_source).to eq(<<~RUBY)
+        class Foo
+          # Comment a
+          sig { params(x: Integer).returns(String) }
+          def a(x)
+            x.to_s
+          end
+          alias_method :a2, :a
+          # Comment b
+          def b; end
+        end
+      RUBY
+    end
+  end
+
+  context 'with config `Signature: nil`' do
+    let(:cop_config) { { 'Signature' => nil } }
+
+    it 'ignores Sorbet signatures' do
+      new_source = autocorrect_source_file(<<~RUBY)
+        class Foo
+          # Comment b
+          def b; end
+          # Comment a
+          sig { params(x: Integer).returns(String) }
+          def a(x)
+            x.to_s
+          end
+          alias_method :a2, :a
+        end
+      RUBY
+
+      expect(new_source).to eq(<<~RUBY)
+        class Foo
+          def a(x)
+            x.to_s
+          end
+          alias_method :a2, :a
+          # Comment a
+          sig { params(x: Integer).returns(String) }
+          # Comment b
+          def b; end
+        end
+      RUBY
+    end
   end
 
   # We integration-test our cop via `::RuboCop::CLI`. This is quite close to an

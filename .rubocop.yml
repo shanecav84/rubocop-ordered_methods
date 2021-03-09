@@ -24,3 +24,9 @@ Metrics/MethodLength:
 Naming/FileName:
   Exclude:
     - lib/rubocop-ordered_methods.rb
+
+# Use the semantic style. If a block has side effects use `do`, and if it is
+# pure use `{}`. This style is too nuanced for a linter, so the cop is
+# disabled.
+Style/BlockDelimiters:
+  Enabled: false

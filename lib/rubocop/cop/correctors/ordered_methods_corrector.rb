@@ -10,9 +10,11 @@ module RuboCop
     class OrderedMethodsCorrector
       include QualifierNodeMatchers
 
-      def initialize(comments, siblings)
+      # @param cop_config ::RuboCop::Config
+      def initialize(comments, siblings, cop_config)
         @comments = comments
         @siblings = siblings
+        @cop_config = cop_config
       end
 
       def correct(node, previous_node)
@@ -85,6 +87,10 @@ module RuboCop
         end
       end
 
+      def join_signature?
+        @cop_config['Signature'] == 'sorbet'
+      end
+
       # @param node RuboCop::AST::DefNode
       # @return Parser::Source::Range
       def join_surroundings(node)
@@ -93,7 +99,11 @@ module RuboCop
           node.source_range
         )
         with_comments = join_comments(node, with_modifiers_and_aliases)
-        join_signature(node, with_comments)
+        if join_signature?
+          join_signature(node, with_comments)
+        else
+          with_comments
+        end
       end
 
       # https://sorbet.org/docs/sigs
