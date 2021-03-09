@@ -10,9 +10,11 @@ module RuboCop
     class OrderedMethodsCorrector
       include QualifierNodeMatchers
 
-      def initialize(comments, siblings)
+      # @param cop_config ::RuboCop::Config
+      def initialize(comments, siblings, cop_config)
         @comments = comments
         @siblings = siblings
+        @cop_config = cop_config
       end
 
       def correct(node, previous_node)
@@ -45,6 +47,9 @@ module RuboCop
         (qualifier?(next_sibling) || alias?(next_sibling)) == node.method_name
       end
 
+      # @param node RuboCop::AST::DefNode
+      # @param source_range Parser::Source::Range
+      # @return Parser::Source::Range
       def join_comments(node, source_range)
         @comments[node].each do |comment|
           source_range = source_range.join(comment.loc.expression)
@@ -52,6 +57,9 @@ module RuboCop
         source_range
       end
 
+      # @param node RuboCop::AST::DefNode
+      # @param source_range Parser::Source::Range
+      # @return Parser::Source::Range
       def join_modifiers_and_aliases(node, source_range)
         preceding_qualifier_index = node.sibling_index
         last_qualifier_index = find_last_qualifier_index(node)
@@ -64,12 +72,46 @@ module RuboCop
         source_range
       end
 
+      # @param node RuboCop::AST::DefNode
+      # @param source_range Parser::Source::Range
+      # @return Parser::Source::Range
+      def join_signature(node, source_range)
+        sib = node.left_sibling
+        if signature?(sib)
+          # If there is a comment directly above the sig, first calculate the
+          # range that covers both.
+          with_comment = join_comments(sib, sib.source_range)
+          source_range.join(with_comment)
+        else
+          source_range
+        end
+      end
+
+      def join_signature?
+        @cop_config['Signature'] == 'sorbet'
+      end
+
+      # @param node RuboCop::AST::DefNode
+      # @return Parser::Source::Range
       def join_surroundings(node)
         with_modifiers_and_aliases = join_modifiers_and_aliases(
           node,
           node.source_range
         )
-        join_comments(node, with_modifiers_and_aliases)
+        with_comments = join_comments(node, with_modifiers_and_aliases)
+        if join_signature?
+          join_signature(node, with_comments)
+        else
+          with_comments
+        end
+      end
+
+      # https://sorbet.org/docs/sigs
+      # @param node RuboCop::AST::Node
+      def signature?(node)
+        return false unless node&.type == :block
+        child = node.children.first
+        child&.type == :send && child.method_name == :sig
       end
     end
   end

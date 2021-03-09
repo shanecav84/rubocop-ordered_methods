@@ -7,6 +7,12 @@ AllCops:
   SuggestExtensions: false
   TargetRubyVersion: 2.4
 
+# Subtle, left to author's discretion. In a long method with many guard clauses,
+# a blank line may help. But, in a short method, especially with only a single
+# guard clause, a blank line can be disruptive.
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
@@ -18,3 +24,9 @@ Metrics/MethodLength:
 Naming/FileName:
   Exclude:
     - lib/rubocop-ordered_methods.rb
+
+# Use the semantic style. If a block has side effects use `do`, and if it is
+# pure use `{}`. This style is too nuanced for a linter, so the cop is
+# disabled.
+Style/BlockDelimiters:
+  Enabled: false

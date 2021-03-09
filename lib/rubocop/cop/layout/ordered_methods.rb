@@ -74,12 +74,14 @@ module RuboCop
             @siblings = node.children
 
             # Init the corrector with the cache to avoid traversing the AST in
-            # the corrector. We always init the @corrector, even if
-            # @options[:auto_correct] is nil, because `add_offense` always
-            # attempts correction. This correction attempt is how RuboCop knows
-            # if the offense can be labeled "[Correctable]".
+            # the corrector.
+            #
+            # We always init the @corrector, even if @options[:auto_correct] is
+            # nil, because `add_offense` always attempts correction. This
+            # correction attempt is how RuboCop knows if the offense can be
+            # labeled "[Correctable]".
             comments = processed_source.ast_with_comments
-            @corrector = OrderedMethodsCorrector.new(comments, @siblings)
+            @corrector = OrderedMethodsCorrector.new(comments, @siblings, cop_config)
           end
         end
 
