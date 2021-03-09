@@ -11,8 +11,8 @@ module RuboCop
       include QualifierNodeMatchers
 
       # @param cop_config ::RuboCop::Config
-      def initialize(comments, siblings, cop_config)
-        @comments = comments
+      def initialize(comment_locations, siblings, cop_config)
+        @comment_locations = comment_locations
         @siblings = siblings
         @cop_config = cop_config
       end
@@ -51,7 +51,7 @@ module RuboCop
       # @param source_range Parser::Source::Range
       # @return Parser::Source::Range
       def join_comments(node, source_range)
-        @comments[node].each do |comment|
+        @comment_locations[node.loc].each do |comment|
           source_range = source_range.join(comment.loc.expression)
         end
         source_range

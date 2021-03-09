@@ -313,6 +313,34 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
         end
       RUBY
     end
+
+    it 'autocorrects two methods with the same signature' do
+      new_source = autocorrect_source_file(<<~RUBY)
+        class Foo
+          # Comment b
+          sig { params(id: ::String).returns(::Array) }
+          def self.b(id)
+          end
+
+          sig { params(id: ::String).returns(::Array) }
+          def self.a(id)
+          end
+        end
+      RUBY
+
+      expect(new_source).to eq(<<~RUBY)
+        class Foo
+          sig { params(id: ::String).returns(::Array) }
+          def self.a(id)
+          end
+
+          # Comment b
+          sig { params(id: ::String).returns(::Array) }
+          def self.b(id)
+          end
+        end
+      RUBY
+    end
   end
 
   context 'with config `Signature: nil`' do

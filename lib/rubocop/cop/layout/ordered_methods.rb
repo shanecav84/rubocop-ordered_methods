@@ -80,8 +80,11 @@ module RuboCop
             # nil, because `add_offense` always attempts correction. This
             # correction attempt is how RuboCop knows if the offense can be
             # labeled "[Correctable]".
-            comments = processed_source.ast_with_comments
-            @corrector = OrderedMethodsCorrector.new(comments, @siblings, cop_config)
+            comment_locations = ::Parser::Source::Comment.associate_locations(
+              processed_source.ast,
+              processed_source.comments
+            )
+            @corrector = OrderedMethodsCorrector.new(comment_locations, @siblings, cop_config)
           end
         end
 
