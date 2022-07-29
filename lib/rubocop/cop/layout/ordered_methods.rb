@@ -43,12 +43,13 @@ module RuboCop
           "#{cop_name}. Expected one of: #{COMPARISONS.keys.join(', ')}".freeze
 
         def autocorrect(node)
-          @corrector.correct(node, @previous_node)
+          _siblings, corrector = cache(node)
+          corrector.correct(node, @previous_node)
         end
 
         def on_begin(node)
-          cache(node)
-          consecutive_methods(@siblings) do |previous, current|
+          siblings, _corrector = cache(node)
+          consecutive_methods(siblings) do |previous, current|
             unless ordered?(previous, current)
               @previous_node = previous
               add_offense(
@@ -70,22 +71,28 @@ module RuboCop
 
         # Cache to avoid traversing the AST multiple times
         def cache(node)
-          @cache ||= begin
-            @siblings = node.children
+          @cache ||= Hash.new do |h, key|
+            h[key.hash] = begin
+              siblings = node.children
 
-            # Init the corrector with the cache to avoid traversing the AST in
-            # the corrector.
-            #
-            # We always init the @corrector, even if @options[:auto_correct] is
-            # nil, because `add_offense` always attempts correction. This
-            # correction attempt is how RuboCop knows if the offense can be
-            # labeled "[Correctable]".
-            comment_locations = ::Parser::Source::Comment.associate_locations(
-              processed_source.ast,
-              processed_source.comments
-            )
-            @corrector = OrderedMethodsCorrector.new(comment_locations, @siblings, cop_config)
+              # Init the corrector with the cache to avoid traversing the AST in
+              # the corrector.
+              #
+              # We always init the @corrector, even if @options[:auto_correct] is
+              # nil, because `add_offense` always attempts correction. This
+              # correction attempt is how RuboCop knows if the offense can be
+              # labeled "[Correctable]".
+              comment_locations = ::Parser::Source::Comment.associate_locations(
+                processed_source.ast,
+                processed_source.comments
+              )
+              corrector = OrderedMethodsCorrector.new(comment_locations, siblings, cop_config)
+
+              [siblings, corrector]
+            end
           end
+
+          @cache[node.hash]
         end
 
         # We disable `Style/ExplicitBlockArgument` for performance. See
