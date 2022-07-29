@@ -13,6 +13,9 @@ AllCops:
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 
+Layout/LineEndStringConcatenationIndentation:
+  EnforcedStyle: indented
+
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
