@@ -428,12 +428,21 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
                 ])
       expect($stderr.string).to eq('')
       expect(exit_status_code).to eq(::RuboCop::CLI::STATUS_OFFENSES)
-      expect($stdout.string).to eq(<<~OUTPUT)
-        == #{file.path} ==
-        C:  3:  3: [Correctable] Layout/OrderedMethods: Methods should be sorted in alphabetical order.
+      if RuboCop::Version::STRING >= '1.30.0'
+        expect($stdout.string).to eq(<<~OUTPUT)
+          == #{file.path} ==
+          C:  3:  3: [Correctable] Layout/OrderedMethods: Methods should be sorted in alphabetical order.
 
-        1 file inspected, 1 offense detected, 1 offense auto-correctable
-      OUTPUT
+          1 file inspected, 1 offense detected, 1 offense autocorrectable
+        OUTPUT
+      else
+        expect($stdout.string).to eq(<<~OUTPUT)
+          == #{file.path} ==
+          C:  3:  3: [Correctable] Layout/OrderedMethods: Methods should be sorted in alphabetical order.
+
+          1 file inspected, 1 offense detected, 1 offense auto-correctable
+        OUTPUT
+      end
     end
   end
 end
