@@ -375,6 +375,46 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
     end
   end
 
+  context 'with configured method qualiifers' do
+    let(:cop_config) { {'MethodQualifiers' => %w[memoize]} }
+
+    it 'recognizes the qualifier as a class method as well' do
+      expect_offense(<<~RUBY)
+        class Foo
+          def b; end
+          def a; end
+          ^^^^^^^^^^ Methods should be sorted in alphabetical order.
+          memoize :a
+        end
+      RUBY
+
+      expect_correction(<<~RUBY)
+        class Foo
+          def a; end
+          memoize :a
+          def b; end
+        end
+      RUBY
+    end
+
+    it 'registers an offense when methods are not in alphabetical order' do
+      expect_offense(<<~RUBY)
+        class Foo
+          def b; end
+          memoize def a; end
+          ^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+        end
+      RUBY
+
+      expect_correction(<<~RUBY)
+        class Foo
+          memoize def a; end
+          def b; end
+        end
+      RUBY
+    end
+  end
+
   # We integration-test our cop via `::RuboCop::CLI`. This is quite close to an
   # end-to-end test, with the normal pros and cons that entails. We exercise
   # more of our code, but our assertions are more fragile, for example asserting
