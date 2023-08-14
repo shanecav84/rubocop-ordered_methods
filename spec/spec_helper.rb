@@ -29,5 +29,5 @@ RSpec.configure do |config|
   # We should take their advice!
   config.raise_on_warning = true
 
-  config.include(::RuboCop::RSpec::ExpectOffense)
+  config.include(RuboCop::RSpec::ExpectOffense)
 end

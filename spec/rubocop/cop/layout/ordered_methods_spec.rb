@@ -424,7 +424,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
     include FileHelper
 
     it 'does not register offense when methods are alphabetical' do
-      cli = ::RuboCop::CLI.new
+      cli = RuboCop::CLI.new
       file = Tempfile.new('rubocop_ordered_methods_spec_input.rb')
       create_file(file.path, <<~INPUT)
         class RTA
@@ -443,12 +443,12 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
                   file.path
                 ])
       expect($stderr.string).to eq('')
-      expect(exit_status_code).to eq(::RuboCop::CLI::STATUS_SUCCESS)
+      expect(exit_status_code).to eq(RuboCop::CLI::STATUS_SUCCESS)
       expect($stdout.string.strip).to eq('1 file inspected, no offenses detected')
     end
 
     it 'registers an offense when methods are not in alphabetical order' do
-      cli = ::RuboCop::CLI.new
+      cli = RuboCop::CLI.new
       file = Tempfile.new('rubocop_ordered_methods_spec_input.rb')
       create_file(file.path, <<~INPUT)
         class RTA
@@ -467,7 +467,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
                   file.path
                 ])
       expect($stderr.string).to eq('')
-      expect(exit_status_code).to eq(::RuboCop::CLI::STATUS_OFFENSES)
+      expect(exit_status_code).to eq(RuboCop::CLI::STATUS_OFFENSES)
       if RuboCop::Version::STRING >= '1.30.0'
         expect($stdout.string).to eq(<<~OUTPUT)
           == #{file.path} ==
