@@ -5,7 +5,7 @@ require: rubocop-ordered_methods
 AllCops:
   NewCops: enable
   SuggestExtensions: false
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 2.7
 
 # Subtle, left to author's discretion. In a long method with many guard clauses,
 # a blank line may help. But, in a short method, especially with only a single
