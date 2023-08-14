@@ -376,7 +376,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
   end
 
   context 'with configured method qualiifers' do
-    let(:cop_config) { {'MethodQualifiers' => %w[memoize]} }
+    let(:cop_config) { { 'MethodQualifiers' => %w[memoize] } }
 
     it 'recognizes the qualifier as a class method as well' do
       expect_offense(<<~RUBY)

@@ -42,6 +42,12 @@ module RuboCop
         ERR_INVALID_COMPARISON = 'Invalid "Comparison" config for ' \
           "#{cop_name}. Expected one of: #{COMPARISONS.keys.join(', ')}".freeze
 
+        def self.method_name(node)
+          return node.method_name unless node.send_type?
+
+          node.first_argument.method_name
+        end
+
         def autocorrect(node)
           _siblings, corrector = cache(node)
           corrector.correct(node, @previous_node)
@@ -69,6 +75,7 @@ module RuboCop
             (node.send_type? && node.bare_access_modifier?)
         end
 
+        # rubocop:disable Metrics/MethodLength
         # Cache to avoid traversing the AST multiple times
         def cache(node)
           @cache ||= Hash.new do |h, key|
@@ -94,6 +101,7 @@ module RuboCop
 
           @cache[node.hash]
         end
+        # rubocop:enable Metrics/MethodLength
 
         # We disable `Style/ExplicitBlockArgument` for performance. See
         # https://github.com/shanecav84/rubocop-ordered_methods/pull/5#pullrequestreview-562957146
@@ -137,12 +145,6 @@ module RuboCop
           end
         end
 
-        def self.method_name(node)
-          return node.method_name unless node.send_type?
-
-          node.first_argument.method_name
-        end
-
         def ordered?(left_method, right_method)
           comparison = COMPARISONS[cop_config['EnforcedStyle']]
           raise Error, ERR_INVALID_COMPARISON if comparison.nil?
@@ -150,15 +152,15 @@ module RuboCop
           comparison.call(left_method, right_method)
         end
 
-        def relevant_node?(node)
-          (node.defs_type? || node.def_type?) && !ignored_method?(node.method_name)
-        end
-
         def qualifier_macro?(node)
           return true if node.bare_access_modifier?
 
           cop_config['MethodQualifiers'].to_a.include?(node.method_name.to_s) &&
             relevant_node?(node.first_argument)
+        end
+
+        def relevant_node?(node)
+          (node.defs_type? || node.def_type?) && !ignored_method?(node.method_name)
         end
       end
     end
