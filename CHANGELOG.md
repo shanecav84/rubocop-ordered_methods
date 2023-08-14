@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10] - 2021-03-10
+
+### Removed
+
+- Drop support for Ruby 2.4, 2.5, and 2.6
+
+### Added
+
+- Support for custom method qualifiers ([#11](https://github.com/shanecav84/rubocop-ordered_methods/pull/11)). Thanks @Darhazer.
+- Setup CI ([#12](https://github.com/shanecav84/rubocop-ordered_methods/pull/12)). Thanks @Darhazer.
+
 ## [0.9] - 2021-03-10
 
 ### Added
