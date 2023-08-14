@@ -76,6 +76,7 @@ Name | Default value | Configurable values
 --- | --- | ---
 EnforcedStyle | `'alphabetical'` | `'alphabetical'`
 IgnoredMethods | `['initialize']` | Array
+MethodQualifiers | `[]` | Array
 Signature | `nil` | `'sorbet'`, `nil`
 
 #### Example
@@ -84,7 +85,10 @@ Signature | `nil` | `'sorbet'`, `nil`
 # .rubocop.yml
 Layout/OrderedMethods:
   EnforcedStyle: alphabetical
-  IgnoredMethods: initialize
+  IgnoredMethods:
+    - initialize
+  MethodQualifiers:
+    - memoize
   Signature: sorbet
 ```
 
@@ -134,6 +138,16 @@ module_function :instance_a
 private :instance_a
 protected :instance_a
 public :instance_a
+```
+
+#### Method qualifiers
+Some gems (like `memery`, `memoist`, etc.) provide a DSL that modifies the method (e.g. for memoization).
+Those DSL methods can be added to the `MethodQualifiers` configuration, and they will be respected.
+
+E.g. the following source can be correctly ordered:
+```ruby
+def b; end;
+memoize def a;end
 ```
 
 #### Method signatures

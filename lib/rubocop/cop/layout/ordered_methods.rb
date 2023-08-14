@@ -35,8 +35,8 @@ module RuboCop
         include RangeHelp
 
         COMPARISONS = {
-          'alphabetical' => lambda do |left_method, right_method|
-            (left_method.method_name <=> right_method.method_name) != 1
+          'alphabetical' => lambda do |left_node, right_node|
+            (method_name(left_node) <=> method_name(right_node)) != 1
           end
         }.freeze
         ERR_INVALID_COMPARISON = 'Invalid "Comparison" config for ' \
@@ -104,10 +104,7 @@ module RuboCop
 
         def filter_relevant_nodes(nodes)
           nodes.select do |node|
-            (
-              (node.defs_type? || node.def_type?) &&
-                !ignored_method?(node.method_name)
-            ) || (node.send_type? && node.bare_access_modifier?)
+            relevant_node?(node) || (node.send_type? && qualifier_macro?(node))
           end
         end
 
@@ -133,11 +130,28 @@ module RuboCop
           end
         end
 
+        def self.method_name(node)
+          return node.method_name unless node.send_type?
+
+          node.first_argument.method_name
+        end
+
         def ordered?(left_method, right_method)
           comparison = COMPARISONS[cop_config['EnforcedStyle']]
           raise Error, ERR_INVALID_COMPARISON if comparison.nil?
 
           comparison.call(left_method, right_method)
+        end
+
+        def relevant_node?(node)
+          (node.defs_type? || node.def_type?) && !ignored_method?(node.method_name)
+        end
+
+        def qualifier_macro?(node)
+          return true if node.bare_access_modifier?
+
+          cop_config['MethodQualifiers'].to_a.include?(node.method_name.to_s) &&
+            relevant_node?(node.first_argument)
         end
       end
     end

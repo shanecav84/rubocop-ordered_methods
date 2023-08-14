@@ -20,9 +20,16 @@ module RuboCop
       def_node_matcher :alias_method?,
                        '(send nil? {:alias_method} ... (sym $_method_name))'
       def_node_matcher :qualifier?, <<-PATTERN
-          (send nil? {#{QUALIFIERS.map(&:inspect).join(' ')}}
-            ... (sym $_method_name))
+          (send nil? #method_qualifier? ... (sym $_method_name))
       PATTERN
+
+      def method_qualifier?(name)
+        qualifiers.include?(name)
+      end
+
+      def qualifiers
+        @qualifiers ||= QUALIFIERS + @cop_config['MethodQualifiers'].to_a.map(&:to_sym)
+      end
     end
   end
 end
