@@ -68,6 +68,18 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
     RUBY
   end
 
+  it 'registers an offense when require is present at the top of the file (regression)' do
+    expect_offense(<<-RUBY.gsub(/^\s+\|/, ''))
+      require "date"
+
+      class Foo
+        def self.class_b; end
+        def self.class_a; end
+        ^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+      end
+    RUBY
+  end
+
   it 'does not register an offense when methods are in alphabetical order' do
     expect_no_offenses(<<-RUBY.gsub(/^\s+\|/, ''))
       def a; end
