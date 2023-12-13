@@ -54,7 +54,9 @@ module RuboCop
         end
 
         def on_begin(node)
-          siblings, _corrector = cache(node)
+          start_node = node.children.find { |child| child.class_type? }&.children&.last || node
+          siblings, _corrector = cache(start_node)
+
           consecutive_methods(siblings) do |previous, current|
             unless ordered?(previous, current)
               @previous_node = previous
