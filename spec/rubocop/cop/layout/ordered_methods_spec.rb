@@ -87,6 +87,16 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
     RUBY
   end
 
+  it 'does not register an offense when there are nodes in the class but no methods' do
+    expect_no_offenses(<<-RUBY.gsub(/^\s+\|/, ''))
+      require "../app/lib/bar"
+
+      class Foo
+        include Bar
+      end
+    RUBY
+  end
+
   it 'autocorrects methods that are not in alphabetical order' do
     new_source = autocorrect_source_file(<<-RUBY.gsub(/^\s+\|/, ''))
       class Foo

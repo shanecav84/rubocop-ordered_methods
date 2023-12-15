@@ -120,7 +120,8 @@ module RuboCop
         # rubocop:enable Style/ExplicitBlockArgument
 
         def filter_relevant_nodes(nodes)
-          nodes.select do |node|
+          nodes.compact.select do |node|
+            next unless node.is_a?(Parser::AST::Node)
             relevant_node?(node) || (node.send_type? && qualifier_macro?(node))
           end
         end
