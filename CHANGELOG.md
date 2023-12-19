@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11] - 2023-12-19
+
+### Fixed
+
+- Fix handling require at the top of the file, nil nodes, and nodes that aren't of type AST::node ([#15](https://github.com/shanecav84/rubocop-ordered_methods/pull/15)). Thanks @rohitpaulk and @libmartinito
+
 ## [0.10] - 2021-03-10
 
 ### Removed

@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name = 'rubocop-ordered_methods'
-  spec.version = '0.10'
+  spec.version = '0.11'
   spec.authors = ['Shane Cavanaugh']
   spec.email = ['shane@shanecav.net']
 
