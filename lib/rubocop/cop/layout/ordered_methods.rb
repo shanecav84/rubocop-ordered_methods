@@ -54,7 +54,7 @@ module RuboCop
         end
 
         def on_begin(node)
-          start_node = node.children.find { |child| child.class_type? }&.children&.last || node
+          start_node = node.children.find(&:class_type?)&.children&.last || node
           siblings, _corrector = cache(start_node)
 
           consecutive_methods(siblings) do |previous, current|
@@ -62,8 +62,7 @@ module RuboCop
               @previous_node = previous
               add_offense(
                 current,
-                message: 'Methods should be sorted in ' \
-                  "#{cop_config['EnforcedStyle']} order."
+                message: "Methods should be sorted in #{cop_config['EnforcedStyle']} order."
               )
             end
           end
