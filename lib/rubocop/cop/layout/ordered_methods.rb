@@ -54,7 +54,9 @@ module RuboCop
         end
 
         def on_begin(node)
-          siblings, _corrector = cache(node)
+          start_node = node.children.find { |child| child.class_type? }&.children&.last || node
+          siblings, _corrector = cache(start_node)
+
           consecutive_methods(siblings) do |previous, current|
             unless ordered?(previous, current)
               @previous_node = previous
@@ -118,7 +120,8 @@ module RuboCop
         # rubocop:enable Style/ExplicitBlockArgument
 
         def filter_relevant_nodes(nodes)
-          nodes.select do |node|
+          nodes.compact.select do |node|
+            next unless node.is_a?(Parser::AST::Node)
             relevant_node?(node) || (node.send_type? && qualifier_macro?(node))
           end
         end
