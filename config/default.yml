@@ -4,4 +4,5 @@ Layout/OrderedMethods:
   EnforcedStyle: 'alphabetical'
   IgnoredMethods:
     - initialize
+  MethodQualifiers: []
   Signature: ~
