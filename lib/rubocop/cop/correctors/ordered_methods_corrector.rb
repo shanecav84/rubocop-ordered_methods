@@ -17,14 +17,11 @@ module RuboCop
         @cop_config = cop_config
       end
 
-      def correct(node, previous_node)
+      def correct(node, previous_node, corrector)
         AliasMethodOrderVerifier.verify!(node, previous_node)
         current_range = join_surroundings(node)
         previous_range = join_surroundings(previous_node)
-        lambda do |corrector|
-          corrector.replace(current_range, previous_range.source)
-          corrector.replace(previous_range, current_range.source)
-        end
+        corrector.swap(current_range, previous_range)
       end
 
       private
@@ -51,7 +48,7 @@ module RuboCop
       # @param source_range Parser::Source::Range
       # @return Parser::Source::Range
       def join_comments(node, source_range)
-        @comment_locations[node.loc].each do |comment|
+        @comment_locations[node].each do |comment|
           source_range = source_range.join(comment.loc.expression)
         end
         source_range
