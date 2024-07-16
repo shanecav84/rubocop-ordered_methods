@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12] - 2024-07-16
+
+### Fixed
+
+- Add MethodQualifiers to the default config [#13](https://github.com/shanecav84/rubocop-ordered_methods/pull/13). Thanks, @Darhazer.
+- Fix rubocop 1.65 compatability [#16](https://github.com/shanecav84/rubocop-ordered_methods/pull/16). Thanks, @Darhazer.
+
 ## [0.11] - 2023-12-19
 
 ### Fixed
