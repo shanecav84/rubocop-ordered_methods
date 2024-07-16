@@ -29,9 +29,9 @@ module RuboCop
       #
       #   def c; end
       #   def d; end
-      class OrderedMethods < Cop
-        # TODO: Extending Cop is deprecated. Should extend Cop::Base.
-        include IgnoredMethods
+      class OrderedMethods < Base
+        extend AutoCorrector
+        include AllowedMethods
         include RangeHelp
 
         COMPARISONS = {
@@ -48,22 +48,15 @@ module RuboCop
           node.first_argument.method_name
         end
 
-        def autocorrect(node)
-          _siblings, corrector = cache(node)
-          corrector.correct(node, @previous_node)
-        end
-
         def on_begin(node)
           start_node = node.children.find(&:class_type?)&.children&.last || node
-          siblings, _corrector = cache(start_node)
+          consecutive_methods(start_node.children) do |previous, current|
+            next if ordered?(previous, current)
 
-          consecutive_methods(siblings) do |previous, current|
-            unless ordered?(previous, current)
-              @previous_node = previous
-              add_offense(
-                current,
-                message: "Methods should be sorted in #{cop_config['EnforcedStyle']} order."
-              )
+            add_offense(current, message: message) do |corrector|
+              OrderedMethodsCorrector.new(
+                processed_source.ast_with_comments, start_node.children, cop_config
+              ).correct(current, previous, corrector)
             end
           end
         end
@@ -75,34 +68,6 @@ module RuboCop
             (node.def_type? && is_class_method_block) ||
             (node.send_type? && node.bare_access_modifier?)
         end
-
-        # rubocop:disable Metrics/MethodLength
-        # Cache to avoid traversing the AST multiple times
-        def cache(node)
-          @cache ||= Hash.new do |h, key|
-            h[key.hash] = begin
-              siblings = node.children
-
-              # Init the corrector with the cache to avoid traversing the AST in
-              # the corrector.
-              #
-              # We always init the @corrector, even if @options[:auto_correct] is
-              # nil, because `add_offense` always attempts correction. This
-              # correction attempt is how RuboCop knows if the offense can be
-              # labeled "[Correctable]".
-              comment_locations = ::Parser::Source::Comment.associate_locations(
-                processed_source.ast,
-                processed_source.comments
-              )
-              corrector = OrderedMethodsCorrector.new(comment_locations, siblings, cop_config)
-
-              [siblings, corrector]
-            end
-          end
-
-          @cache[node.hash]
-        end
-        # rubocop:enable Metrics/MethodLength
 
         # We disable `Style/ExplicitBlockArgument` for performance. See
         # https://github.com/shanecav84/rubocop-ordered_methods/pull/5#pullrequestreview-562957146
@@ -147,6 +112,10 @@ module RuboCop
           end
         end
 
+        def message
+          "Methods should be sorted in #{cop_config['EnforcedStyle']} order."
+        end
+
         def ordered?(left_method, right_method)
           comparison = COMPARISONS[cop_config['EnforcedStyle']]
           raise Error, ERR_INVALID_COMPARISON if comparison.nil?
@@ -162,7 +131,7 @@ module RuboCop
         end
 
         def relevant_node?(node)
-          (node.defs_type? || node.def_type?) && !ignored_method?(node.method_name)
+          (node.defs_type? || node.def_type?) && !allowed_method?(node.method_name)
         end
       end
     end
