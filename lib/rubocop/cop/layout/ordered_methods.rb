@@ -50,15 +50,7 @@ module RuboCop
 
         def on_begin(node)
           start_node = node.children.find(&:class_type?)&.children&.last || node
-          consecutive_methods(start_node.children) do |previous, current|
-            next if ordered?(previous, current)
-
-            add_offense(current, message: message) do |corrector|
-              OrderedMethodsCorrector.new(
-                processed_source.ast_with_comments, start_node.children, cop_config
-              ).correct(current, previous, corrector)
-            end
-          end
+          check(start_node)
         end
 
         private
@@ -67,6 +59,22 @@ module RuboCop
           (node.defs_type? && !is_class_method_block) ||
             (node.def_type? && is_class_method_block) ||
             (node.send_type? && node.bare_access_modifier?)
+        end
+
+        def check(start_node)
+          consecutive_methods(start_node.children) do |previous, current|
+            next if ordered?(previous, current)
+
+            add_offense(current, message: message) do |corrector|
+              next if part_of_ignored_node?(previous)
+
+              OrderedMethodsCorrector.new(
+                processed_source.ast_with_comments, start_node.children, cop_config
+              ).correct(current, previous, corrector)
+
+              ignore_node(current)
+            end
+          end
         end
 
         # We disable `Style/ExplicitBlockArgument` for performance. See
