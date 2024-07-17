@@ -17,7 +17,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
   let(:enforced_style) { 'alphabetical' }
 
   it 'registers an offense when methods are not in alphabetical order' do
-    expect_offense(<<-RUBY.gsub(/^\s+\|/, ''))
+    expect_offense(<<~RUBY)
       class Foo
         def self.class_b; end
         def self.class_a; end
@@ -69,7 +69,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
   end
 
   it 'registers an offense when require is present at the top of the file (regression)' do
-    expect_offense(<<-RUBY.gsub(/^\s+\|/, ''))
+    expect_offense(<<~RUBY)
       require "date"
 
       class Foo
@@ -81,14 +81,14 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
   end
 
   it 'does not register an offense when methods are in alphabetical order' do
-    expect_no_offenses(<<-RUBY.gsub(/^\s+\|/, ''))
+    expect_no_offenses(<<~RUBY)
       def a; end
       def b; end
     RUBY
   end
 
   it 'does not register an offense when there are nodes in the class but no methods' do
-    expect_no_offenses(<<-RUBY.gsub(/^\s+\|/, ''))
+    expect_no_offenses(<<~RUBY)
       require "../app/lib/bar"
 
       class Foo
@@ -97,8 +97,37 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
     RUBY
   end
 
+  it 'auto-corrects consecutive offenses' do
+    expect_offense(<<~RUBY)
+      require "date"
+
+      class Foo
+        def self.class_c; end
+
+        def self.class_b; end
+        ^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+
+        def self.class_a; end
+        ^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+      end
+    RUBY
+
+    # first auto-correction pass
+    expect_correction(<<~RUBY)
+      require "date"
+
+      class Foo
+        def self.class_b; end
+
+        def self.class_c; end
+
+        def self.class_a; end
+      end
+    RUBY
+  end
+
   it 'autocorrects methods that are not in alphabetical order' do
-    new_source = autocorrect_source_file(<<-RUBY.gsub(/^\s+\|/, ''))
+    new_source = autocorrect_source_file(<<~RUBY)
       class Foo
         # Comment class_b
         def self.class_b; end
@@ -150,7 +179,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
       end
     RUBY
 
-    expect(new_source).to eq(<<-RUBY.gsub(/^\s+\|/, ''))
+    expect(new_source).to eq(<<~RUBY)
       class Foo
         def self.class_a; end
         # Comment class_b
