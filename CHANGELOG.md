@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13] - 2024-10-01
+
+### Fixed
+
+- Fix clobbering when consecutive nodes are with wrong order [#17](https://github.com/shanecav84/rubocop-ordered_methods/pull/17). Thanks, @Darhazer.
+
 ## [0.12] - 2024-07-16
 
 ### Fixed
