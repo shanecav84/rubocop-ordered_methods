@@ -1,5 +1,5 @@
 [![Gem Version](https://badge.fury.io/rb/rubocop-ordered_methods.svg)](https://badge.fury.io/rb/rubocop-ordered_methods)
-[![Build Status](https://travis-ci.org/shanecav84/rubocop-ordered_methods.svg?branch=master)](https://travis-ci.org/shanecav84/rubocop-ordered_methods)
+[![Build Status](https://github.com/shanecav84/rubocop-ordered_methods/actions/workflows/main.yml/badge.svg)](https://github.com/shanecav84/rubocop-ordered_methods/actions)
 
 # RuboCop OrderedMethods
 
