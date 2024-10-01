@@ -171,6 +171,12 @@ with `Signature: sorbet`.
   def a; end
   ```
 
+## Project status
+
+Development is ongoing. There might be extended periods between releases. 
+The maintenance goal is to add features as needed and to maintain compatibility 
+with Ruby and rubocop updates.
+
 ## Development
 
 ### Setup
