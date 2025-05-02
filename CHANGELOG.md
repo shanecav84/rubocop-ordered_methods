@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14] - 2025-05-02
+
+### Fixed
+
+- rubocop-ordered_methods ignores outer classes when inspecting files [#19](https://github.com/shanecav84/rubocop-ordered_methods/pull/19). Thanks, @ShkumbinDelija.
+
 ## [0.13] - 2024-10-01
 
 ### Fixed
