@@ -334,6 +334,79 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
     RUBY
   end
 
+  context 'when a class has inner classes/modules' do
+    let(:expected_offense) do
+      <<~RUBY
+        class Parent
+          def self.parent_b; end
+          def self.parent_a; end
+          ^^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+
+          def parent_instance_b; end
+          def parent_instance_a; end
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+
+          class Child
+            def self.child_b; end
+            def self.child_a; end
+            ^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+
+            def child_instance_b; end
+            def child_instance_a; end
+            ^^^^^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+          end
+
+          module InnerModule
+            def self.inner_module_b; end
+            def self.inner_module_a; end
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+
+            def inner_instance_b; end
+            def inner_instance_a; end
+            ^^^^^^^^^^^^^^^^^^^^^^^^^ Methods should be sorted in alphabetical order.
+          end
+        end
+      RUBY
+    end
+
+    let(:expected_correction) do
+      <<~RUBY
+        class Parent
+          def self.parent_a; end
+          def self.parent_b; end
+
+          def parent_instance_a; end
+          def parent_instance_b; end
+
+          class Child
+            def self.child_a; end
+            def self.child_b; end
+
+            def child_instance_a; end
+            def child_instance_b; end
+          end
+
+          module InnerModule
+            def self.inner_module_a; end
+            def self.inner_module_b; end
+
+            def inner_instance_a; end
+            def inner_instance_b; end
+          end
+        end
+      RUBY
+    end
+
+    it 'registers an offense for methods not in alphabetical order in inner classes and modules' do
+      expect_offense(expected_offense)
+      expect_correction(expected_correction)
+    end
+
+    it 'does not register an offense for methods in alphabetical order in inner classes and modules' do
+      expect_no_offenses(expected_correction)
+    end
+  end
+
   context 'with config `Signature: sorbet`' do
     let(:cop_config) { { 'Signature' => 'sorbet' } }
 

@@ -49,8 +49,9 @@ module RuboCop
         end
 
         def on_begin(node)
-          start_node = node.children.find(&:class_type?)&.children&.last || node
-          check(start_node)
+          check(node)
+
+          node.each_descendant(:class, :module) { |descendant| check(descendant) }
         end
 
         private
