@@ -94,6 +94,8 @@ Layout/OrderedMethods:
 
 ### Corrector
 
+See [Caveats](#caveats).
+
 The corrector will attempt to order methods based on the `EnforcedStyle`. It attempts to
 include surrounding comments and the qualifiers (e.g., aliases) listed in
 `::RuboCop::Cop::OrderedMethodsCorrector::QUALIFIERS`. The following (monstrous)
