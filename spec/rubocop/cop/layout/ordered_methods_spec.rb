@@ -558,7 +558,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
       INPUT
       exit_status_code =
         cli.run([
-                  '--require',
+                  '--plugin',
                   'rubocop-ordered_methods',
                   '--format',
                   'simple',
