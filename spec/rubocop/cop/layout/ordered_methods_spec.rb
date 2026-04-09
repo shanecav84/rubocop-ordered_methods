@@ -556,23 +556,16 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
           def self.b; end
         end
       INPUT
-
-      args = [
-        '--format',
-        'simple',
-        '--only',
-        'Layout/OrderedMethods'
-      ]
-      rubocop_version = Gem::Specification.find_by_name('rubocop').version.to_s
-      if Gem::Version.new(rubocop_version) < Gem::Version.new('1.72')
-        args += ['--require', 'rubocop-ordered_methods']
-      else
-        args += ['--plugin', 'rubocop-ordered_methods']
-      end
-
-      args << file.path
-
-      exit_status_code = cli.run(args)
+      exit_status_code =
+        cli.run([
+                  '--require',
+                  'rubocop-ordered_methods',
+                  '--format',
+                  'simple',
+                  '--only',
+                  'Layout/OrderedMethods',
+                  file.path
+                ])
       expect($stderr.string).to eq('')
       expect(exit_status_code).to eq(RuboCop::CLI::STATUS_SUCCESS)
       expect($stdout.string.strip).to eq('1 file inspected, no offenses detected')
