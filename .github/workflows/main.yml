@@ -23,6 +23,7 @@ jobs:
           - "3.2"
           - "3.3"
           - "3.4"
+          - "4.0"
 
     name: "Ruby ${{ matrix.ruby }}: run rspec"
     steps:
