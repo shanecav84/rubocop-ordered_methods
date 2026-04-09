@@ -50,21 +50,33 @@ Or install it yourself as:
 
 ## Usage
 
-You need to tell RuboCop to load the OrderedMethods extension. There are two
-ways to do this:
+You need to tell RuboCop to load the OrderedMethods extension. We support RuboCop's official plugin system as well as 
+the old `require` system.
 
-### RuboCop configuration file
+### Plugin
 
-Put this into your `.rubocop.yml`.
+In `.rubocop.yml`, add `rubocop-ordered_methods` to `plugins`.
+
+```
+plugins: 
+  - rubocop-ordered_methods
+```
+
+#### Command line
+
+```bash
+rubocop --plugin rubocop-ordered_methods
+```
+
+### Require (deprecated)
+
+In `.rubocop.yml`, add `rubocop-ordered_methods` to `require`.
 
 ```
 require: rubocop-ordered_methods
 ```
 
-Now you can run `rubocop` and it will automatically load the RuboCop OrderedMethods
-cops together with the standard cops.
-
-### Command line
+#### Command line
 
 ```bash
 rubocop --require rubocop-ordered_methods
