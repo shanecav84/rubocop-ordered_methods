@@ -3,9 +3,11 @@
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
+require_relative 'lib/rubocop/ordered_methods/version'
+
 Gem::Specification.new do |spec|
   spec.name = 'rubocop-ordered_methods'
-  spec.version = '0.14'
+  spec.version = RuboCop::OrderedMethods::VERSION
   spec.authors = ['Shane Cavanaugh']
   spec.email = ['shane@shanecav.net']
 
@@ -26,7 +28,9 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
+  spec.add_dependency 'lint_roller'
   spec.add_dependency 'rubocop', '>= 1.0'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
+  spec.metadata['default_lint_roller_plugin'] = 'RuboCop::OrderedMethods::Plugin'
 end
