@@ -3,9 +3,11 @@
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
+require_relative './lib/rubocop/ordered_methods/version'
+
 Gem::Specification.new do |spec|
   spec.name = 'rubocop-ordered_methods'
-  spec.version = '0.14'
+  spec.version = RuboCop::OrderedMethods::VERSION
   spec.authors = ['Shane Cavanaugh']
   spec.email = ['shane@shanecav.net']
 
