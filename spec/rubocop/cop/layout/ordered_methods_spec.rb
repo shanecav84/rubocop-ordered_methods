@@ -582,7 +582,7 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
       INPUT
       exit_status_code =
         cli.run([
-                  '--require',
+                  '--plugin',
                   'rubocop-ordered_methods',
                   '--format',
                   'simple',
@@ -591,6 +591,45 @@ RSpec.describe RuboCop::Cop::Layout::OrderedMethods do
                   file.path
                 ])
       expect($stderr.string).to eq('')
+      expect(exit_status_code).to eq(RuboCop::CLI::STATUS_OFFENSES)
+      if RuboCop::Version::STRING >= '1.30.0'
+        expect($stdout.string).to eq(<<~OUTPUT)
+          == #{file.path} ==
+          C:  3:  3: [Correctable] Layout/OrderedMethods: Methods should be sorted in alphabetical order.
+
+          1 file inspected, 1 offense detected, 1 offense autocorrectable
+        OUTPUT
+      else
+        expect($stdout.string).to eq(<<~OUTPUT)
+          == #{file.path} ==
+          C:  3:  3: [Correctable] Layout/OrderedMethods: Methods should be sorted in alphabetical order.
+
+          1 file inspected, 1 offense detected, 1 offense auto-correctable
+        OUTPUT
+      end
+    end
+
+    it 'registers an offense when methods are not in alphabetical order for require system' do
+      cli = RuboCop::CLI.new
+      file = Tempfile.new('rubocop_ordered_methods_spec_input.rb')
+      create_file(file.path, <<~INPUT)
+        class RTA
+          def self.b; end
+          def self.a; end
+        end
+      INPUT
+      exit_status_code =
+        cli.run([
+                  '--require',
+                  'rubocop-ordered_methods',
+                  '--format',
+                  'simple',
+                  '--only',
+                  'Layout/OrderedMethods',
+                  file.path
+                ])
+      expect($stderr.string)
+        .to include('rubocop-ordered_methods gem supports plugin, use `--plugin` instead of `--require`.')
       expect(exit_status_code).to eq(RuboCop::CLI::STATUS_OFFENSES)
       if RuboCop::Version::STRING >= '1.30.0'
         expect($stdout.string).to eq(<<~OUTPUT)
