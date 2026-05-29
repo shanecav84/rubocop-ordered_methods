@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16] - 2026-05-29
+
+### Fixed
+
+- Added missing require
+
+## [0.15] - 2026-05-29
+
+### Changed
+
+- Support plugin system [#21](https://github.com/shanecav84/rubocop-ordered_methods/pull/21)
+
 ## [0.14] - 2025-05-02
 
 ### Fixed
