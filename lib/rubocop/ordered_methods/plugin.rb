@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'lint_roller'
+require_relative 'version'
 
 module RuboCop
   module OrderedMethods
