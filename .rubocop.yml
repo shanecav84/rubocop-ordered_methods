@@ -1,6 +1,7 @@
 inherit_from: .rubocop_todo.yml
 
-require: rubocop-ordered_methods
+plugins:
+  - rubocop-ordered_methods
 
 AllCops:
   NewCops: enable

@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require 'rubocop'
 require_relative 'rubocop/ordered_methods'
-require_relative 'rubocop/cop/layout/ordered_methods'
-require_relative 'rubocop/cop/correctors/ordered_methods_corrector'
 
-RuboCop::OrderedMethods.inject_defaults!
+# We support both the old, unsupported `require` and the new, supported `plugins`
+rubocop_version = Gem::Specification.find_by_name('rubocop').version.to_s
+RuboCop::OrderedMethods.inject_defaults! if Gem::Version.new(rubocop_version) < Gem::Version.new('1.72')

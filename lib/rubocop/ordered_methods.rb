@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+require 'rubocop'
+require_relative 'cop/layout/ordered_methods'
+require_relative 'cop/correctors/ordered_methods_corrector'
+require_relative 'ordered_methods/plugin'
+
 module RuboCop
   # Our namespace
   module OrderedMethods
